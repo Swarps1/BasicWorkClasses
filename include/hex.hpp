@@ -33,7 +33,6 @@ private:
     size_t length;
     size_t capacity;
 
-    // Увеличение
     void resize(size_t newCapacity);
 
     void trimLeadingZeros();

@@ -12,7 +12,7 @@ Hex::Hex(const std::string &hexStr) : data(nullptr), length(0), capacity(0)
 {
     if (hexStr.empty())
     {
-        throw std::invalid_argument("Empty hex string");
+        throw std::invalid_argument("Пустая строка");
     }
 
     size_t strLen = hexStr.length();
@@ -27,7 +27,7 @@ Hex::Hex(const std::string &hexStr) : data(nullptr), length(0), capacity(0)
         if (!std::isxdigit(c))
         {
             delete[] data;
-            throw std::invalid_argument("Invalid hex character in string");
+            throw std::invalid_argument("Недопустимый символ");
         }
         data[idx++] = charToHexDigit(c);
     }
@@ -47,7 +47,7 @@ Hex::Hex(const unsigned char *digits, size_t size) : data(nullptr), length(0), c
 {
     if (size == 0)
     {
-        throw std::invalid_argument("Empty hex number");
+        throw std::invalid_argument("Пустая строка");
     }
     capacity = size;
     data = new unsigned char[capacity];
@@ -56,7 +56,7 @@ Hex::Hex(const unsigned char *digits, size_t size) : data(nullptr), length(0), c
         if (digits[i] > 15)
         {
             delete[] data;
-            throw std::invalid_argument("Invalid hex digit");
+            throw std::invalid_argument("Недопустимый символ");
         }
         data[i] = digits[i];
     }
@@ -113,7 +113,7 @@ Hex Hex::subtract(const Hex &other) const
 {
     if (isLess(other))
     {
-        throw std::runtime_error("Negative result in unsigned hex subtraction");
+        throw std::runtime_error("Отрицательный результат");
     }
 
     unsigned char *resultData = new unsigned char[length];
@@ -228,7 +228,7 @@ unsigned char Hex::charToHexDigit(char c)
         return c - '0';
     if (c >= 'A' && c <= 'F')
         return c - 'A' + 10;
-    throw std::invalid_argument("Invalid hex character");
+    throw std::invalid_argument("Недопустимый символ");
 }
 
 char Hex::hexDigitToChar(unsigned char digit)
