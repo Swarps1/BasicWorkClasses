@@ -3,13 +3,11 @@
 #include <cctype>
 #include <cstring>
 
-// Конструктор по умолчанию
 Hex::Hex() : data(new unsigned char[1]), length(1), capacity(1)
 {
     data[0] = 0;
 }
 
-// Конструктор из строки
 Hex::Hex(const std::string &hexStr) : data(nullptr), length(0), capacity(0)
 {
     if (hexStr.empty())
@@ -45,7 +43,6 @@ Hex::Hex(const std::string &hexStr) : data(nullptr), length(0), capacity(0)
     }
 }
 
-// Конструктор из массива
 Hex::Hex(const unsigned char *digits, size_t size) : data(nullptr), length(0), capacity(0)
 {
     if (size == 0)
@@ -75,19 +72,16 @@ Hex::Hex(const unsigned char *digits, size_t size) : data(nullptr), length(0), c
     }
 }
 
-// Конструктор копирования
 Hex::Hex(const Hex &other) : data(new unsigned char[other.capacity]), length(other.length), capacity(other.capacity)
 {
     std::memcpy(data, other.data, length * sizeof(unsigned char));
 }
 
-// Деструктор
 Hex::~Hex()
 {
     delete[] data;
 }
 
-// Сложение
 Hex Hex::add(const Hex &other) const
 {
     size_t maxSize = std::max(length, other.length);
@@ -115,7 +109,6 @@ Hex Hex::add(const Hex &other) const
     return result;
 }
 
-// Вычитание
 Hex Hex::subtract(const Hex &other) const
 {
     if (isLess(other))
@@ -156,7 +149,6 @@ Hex Hex::copy() const
     return Hex(*this);
 }
 
-// Равенство
 bool Hex::isEqual(const Hex &other) const
 {
     if (length != other.length)
@@ -169,7 +161,6 @@ bool Hex::isEqual(const Hex &other) const
     return true;
 }
 
-// Больше
 bool Hex::isGreater(const Hex &other) const
 {
     if (length != other.length)
@@ -187,13 +178,11 @@ bool Hex::isGreater(const Hex &other) const
     return false;
 }
 
-// Меньше
 bool Hex::isLess(const Hex &other) const
 {
     return !isGreater(other) && !isEqual(other);
 }
 
-// Строковое представление
 std::string Hex::toString() const
 {
     if (length == 1 && data[0] == 0)
@@ -208,13 +197,11 @@ std::string Hex::toString() const
     return result;
 }
 
-// Размер числа
 size_t Hex::getSize() const
 {
     return length;
 }
 
-// Увеличение ёмкости
 void Hex::resize(size_t newCapacity)
 {
     if (newCapacity <= capacity)
@@ -226,7 +213,6 @@ void Hex::resize(size_t newCapacity)
     capacity = newCapacity;
 }
 
-// Удаление ведущих нулей
 void Hex::trimLeadingZeros()
 {
     while (length > 1 && data[length - 1] == 0)
@@ -235,7 +221,6 @@ void Hex::trimLeadingZeros()
     }
 }
 
-// Преобразование символа в цифру
 unsigned char Hex::charToHexDigit(char c)
 {
     c = std::toupper(c);
@@ -246,7 +231,6 @@ unsigned char Hex::charToHexDigit(char c)
     throw std::invalid_argument("Invalid hex character");
 }
 
-// Преобразование цифры в символ
 char Hex::hexDigitToChar(unsigned char digit)
 {
     if (digit < 10)
