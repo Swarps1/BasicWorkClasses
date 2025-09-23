@@ -6,51 +6,39 @@
 class Hex
 {
 public:
-    // Конструктор по умолчанию (ноль)
     Hex();
 
-    // Конструктор из строки
     explicit Hex(const std::string &hexStr);
 
-    // Конструктор из массива цифр
     Hex(const unsigned char *digits, size_t size);
 
-    // Конструктор копирования
     Hex(const Hex &other);
 
-    // Деструктор
     ~Hex();
 
-    // Арифметические операции
-    Hex add(const Hex &other) const;      // Сложение
-    Hex subtract(const Hex &other) const; // Вычитание
-    Hex copy() const;                     // Копия объекта
+    Hex add(const Hex &other) const;
+    Hex subtract(const Hex &other) const;
+    Hex copy() const;
 
-    // Операции сравнения
-    bool isEqual(const Hex &other) const;   // Равно
-    bool isGreater(const Hex &other) const; // Больше
-    bool isLess(const Hex &other) const;    // Меньше
+    bool isEqual(const Hex &other) const;
+    bool isGreater(const Hex &other) const;
+    bool isLess(const Hex &other) const;
 
-    // Получение строкового представления числа
     std::string toString() const;
 
-    // Получение размера числа
     size_t getSize() const;
 
 private:
-    unsigned char *data; // Динамический массив цифр
-    size_t length;       // Текущая длина
-    size_t capacity;     // Выделенная память
+    unsigned char *data;
+    size_t length;
+    size_t capacity;
 
     // Увеличение
     void resize(size_t newCapacity);
 
-    // Удаление ведущих нулей
     void trimLeadingZeros();
 
-    // функция для проверки корректности символа
     static unsigned char charToHexDigit(char c);
 
-    // функция для преобразования цифры в символ
     static char hexDigitToChar(unsigned char digit);
 };
