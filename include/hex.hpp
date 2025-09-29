@@ -7,24 +7,24 @@ class Hex
 {
 public:
     Hex();
-    explicit Hex(const std::string &str);
-    Hex(const unsigned char *d, size_t s);
-    Hex(const Hex &oth);
+    explicit Hex(std::string str);
+    Hex(const unsigned char *arr, size_t sz);
+    Hex(const Hex &o);
     ~Hex();
-    Hex add(const Hex &oth) const;
-    Hex subtract(const Hex &oth) const;
-    Hex copy() const;
-    bool isEqual(const Hex &oth) const;
-    bool isGreater(const Hex &oth) const;
-    bool isLess(const Hex &oth) const;
-    std::string toString() const;
-    size_t getSize() const;
+    Hex add(const Hex &o) const;
+    Hex sub(const Hex &o) const;
+    Hex cpy() const;
+    bool eq(const Hex &o) const;
+    bool gt(const Hex &o) const;
+    bool lt(const Hex &o) const;
+    std::string str() const;
+    size_t sz() const;
 
 private:
     unsigned char *d;
     size_t len, cap;
-    void resize(size_t newCap);
-    void trimZeros();
+    void grow(size_t newCap);
+    void trim();
     static unsigned char c2h(char c);
     static char h2c(unsigned char d);
 };

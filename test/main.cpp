@@ -4,22 +4,23 @@ int main()
 {
     try
     {
-        Hex a("1A3F"), b("FF");
-        std::cout << "a=" << a.toString() << '\n';
-        std::cout << "b=" << b.toString() << '\n';
-        Hex sum = a.add(b);
-        std::cout << "a+b=" << sum.toString() << '\n';
-        Hex diff = a.subtract(b);
-        std::cout << "a-b=" << diff.toString() << '\n';
-        Hex copy = a.copy();
-        std::cout << "Copy=" << copy.toString() << '\n';
-        std::cout << "a==b:" << (a.isEqual(b) ? "true" : "false") << '\n';
-        std::cout << "a>b:" << (a.isGreater(b) ? "true" : "false") << '\n';
-        std::cout << "a<b:" << (a.isLess(b) ? "true" : "false") << '\n';
+        Hex x("1A3F");
+        Hex y("FF");
+        std::cout << "a=" << x.str() << '\n'
+                  << "b=" << y.str() << '\n';
+        Hex s = x.add(y);
+        std::cout << "a+b=" << s.str() << '\n';
+        Hex d = x.sub(y);
+        std::cout << "a-b=" << d.str() << '\n';
+        Hex c = x.cpy();
+        std::cout << "copy=" << c.str() << '\n';
+        std::cout << "a==b:" << (x.eq(y) ? "yes" : "no") << '\n';
+        std::cout << "a>b:" << (x.gt(y) ? "yes" : "no") << '\n';
+        std::cout << "a<b:" << (x.lt(y) ? "yes" : "no") << '\n';
     }
-    catch (const std::exception &e)
+    catch (std::exception &e)
     {
-        std::cerr << "Error:" << e.what() << '\n';
+        std::cerr << "err:" << e.what() << '\n';
     }
     return 0;
 }

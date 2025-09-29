@@ -1,28 +1,29 @@
 #include "../include/hex.hpp"
-#include <algorithm>
-#include <cctype>
 #include <cstring>
+#include <cctype>
 
-Hex::Hex() : d(new unsigned char[1]), len(1), cap(1) { d[0] = 0; }
-
-Hex::Hex(const std::string &str) : d(nullptr), len(0), cap(0)
+Hex::Hex() : d(new unsigned char[1]), len(1), cap(1)
 {
-    if (str.empty())
-        throw std::invalid_argument("Empty hex string");
-    cap = str.length();
+    d[0] = 0;
+}
+
+Hex::Hex(std::string str) : d(0), len(0), cap(0)
+{
+    if (!str.size())
+        throw std::invalid_argument("empty");
+    cap = str.size();
     d = new unsigned char[cap];
-    len = 0;
-    for (auto it = str.rbegin(); it != str.rend(); ++it)
+    for (int i = str.size() - 1; i >= 0; i--)
     {
-        if (!std::isxdigit(*it))
+        if (!isxdigit(str[i]))
         {
             delete[] d;
-            throw std::invalid_argument("Invalid hex character");
+            throw std::invalid_argument("bad char");
         }
-        d[len++] = c2h(*it);
+        d[len++] = c2h(str[i]);
     }
-    trimZeros();
-    if (len == 0)
+    trim();
+    if (!len)
     {
         delete[] d;
         d = new unsigned char[1];
@@ -32,154 +33,156 @@ Hex::Hex(const std::string &str) : d(nullptr), len(0), cap(0)
     }
 }
 
-Hex::Hex(const unsigned char *d, size_t s) : d(nullptr), len(0), cap(0)
+Hex::Hex(const unsigned char *arr, size_t sz) : d(0), len(0), cap(0)
 {
-    if (s == 0)
-        throw std::invalid_argument("Empty hex number");
-    cap = s;
-    this->d = new unsigned char[cap];
-    for (size_t i = 0; i < s; ++i)
+    if (!sz)
+        throw std::invalid_argument("empty");
+    cap = sz;
+    d = new unsigned char[cap];
+    for (size_t i = 0; i < sz; i++)
     {
-        if (d[i] > 15)
+        if (arr[i] > 15)
         {
-            delete[] this->d;
-            throw std::invalid_argument("Invalid hex digit");
+            delete[] d;
+            throw std::invalid_argument("bad digit");
         }
-        this->d[i] = d[i];
+        d[i] = arr[i];
     }
-    len = s;
-    trimZeros();
-    if (len == 0)
+    len = sz;
+    trim();
+    if (!len)
     {
-        delete[] this->d;
-        this->d = new unsigned char[1];
-        this->d[0] = 0;
+        delete[] d;
+        d = new unsigned char[1];
+        d[0] = 0;
         len = 1;
         cap = 1;
     }
 }
 
-Hex::Hex(const Hex &oth) : d(new unsigned char[oth.cap]), len(oth.len), cap(oth.cap)
+Hex::Hex(const Hex &o) : d(new unsigned char[o.cap]), len(o.len), cap(o.cap)
 {
-    std::memcpy(d, oth.d, len * sizeof(unsigned char));
+    memcpy(d, o.d, len);
 }
 
 Hex::~Hex() { delete[] d; }
 
-void Hex::resize(size_t newCap)
+void Hex::grow(size_t newCap)
 {
     if (newCap <= cap)
         return;
-    unsigned char *newD = new unsigned char[newCap];
-    std::memcpy(newD, d, len * sizeof(unsigned char));
+    unsigned char *t = new unsigned char[newCap];
+    memcpy(t, d, len);
     delete[] d;
-    d = newD;
+    d = t;
     cap = newCap;
 }
 
-Hex Hex::add(const Hex &oth) const
+Hex Hex::add(const Hex &o) const
 {
-    size_t maxS = std::max(len, oth.len);
-    unsigned char *res = new unsigned char[maxS + 1];
-    unsigned int c = 0;
-    size_t resLen = 0;
-    for (size_t i = 0; i < maxS; ++i)
+    size_t m = len > o.len ? len : o.len;
+    unsigned char *r = new unsigned char[m + 1];
+    int c = 0, k = 0;
+    for (size_t i = 0; i < m; i++)
     {
-        unsigned int sum = c;
+        int s = c;
         if (i < len)
-            sum += d[i];
-        if (i < oth.len)
-            sum += oth.d[i];
-        res[resLen++] = sum % 16;
-        c = sum / 16;
+            s += d[i];
+        if (i < o.len)
+            s += o.d[i];
+        r[k++] = s % 16;
+        c = s / 16;
     }
     if (c)
-        res[resLen++] = c;
-    Hex resHex(res, resLen);
-    delete[] res;
-    return resHex;
+        r[k++] = c;
+    Hex h(r, k);
+    delete[] r;
+    return h;
 }
 
-Hex Hex::subtract(const Hex &oth) const
+Hex Hex::sub(const Hex &o) const
 {
-    if (isLess(oth))
-        throw std::runtime_error("Negative result");
-    unsigned char *res = new unsigned char[len];
-    int b = 0;
-    size_t resLen = 0;
-    for (size_t i = 0; i < len; ++i)
+    if (lt(o))
+        throw std::runtime_error("negative");
+    unsigned char *r = new unsigned char[len];
+    int b = 0, k = 0;
+    for (size_t i = 0; i < len; i++)
     {
-        int cur = d[i] - b;
-        if (i < oth.len)
-            cur -= oth.d[i];
-        if (cur < 0)
+        int v = d[i] - b;
+        if (i < o.len)
+            v -= o.d[i];
+        if (v < 0)
         {
-            cur += 16;
+            v += 16;
             b = 1;
         }
         else
             b = 0;
-        res[resLen++] = cur;
+        r[k++] = v;
     }
-    Hex resHex(res, resLen);
-    delete[] res;
-    resHex.trimZeros();
-    return resHex;
+    Hex h(r, k);
+    delete[] r;
+    h.trim();
+    return h;
 }
 
-Hex Hex::copy() const { return Hex(*this); }
-bool Hex::isEqual(const Hex &oth) const
+Hex Hex::cpy() const
 {
-    if (len != oth.len)
+    Hex h(*this);
+    return h;
+}
+
+bool Hex::eq(const Hex &o) const
+{
+    if (len != o.len)
         return false;
-    for (size_t i = 0; i < len; ++i)
-    {
-        if (d[i] != oth.d[i])
+    for (size_t i = 0; i < len; i++)
+        if (d[i] != o.d[i])
             return false;
-    }
     return true;
 }
 
-bool Hex::isGreater(const Hex &oth) const
+bool Hex::gt(const Hex &o) const
 {
-    if (len != oth.len)
-        return len > oth.len;
-    for (size_t i = len; i > 0; --i)
-    {
-        if (d[i - 1] != oth.d[i - 1])
-            return d[i - 1] > oth.d[i - 1];
-    }
+    if (len != o.len)
+        return len > o.len;
+    for (int i = len - 1; i >= 0; i--)
+        if (d[i] != o.d[i])
+            return d[i] > o.d[i];
     return false;
 }
 
-bool Hex::isLess(const Hex &oth) const { return !isGreater(oth) && !isEqual(oth); }
+bool Hex::lt(const Hex &o) const
+{
+    return !gt(o) && !eq(o);
+}
 
-std::string Hex::toString() const
+std::string Hex::str() const
 {
     if (len == 1 && d[0] == 0)
         return "0";
-    std::string res;
-    for (size_t i = len; i > 0; --i)
-        res += h2c(d[i - 1]);
-    return res;
+    std::string s;
+    for (int i = len - 1; i >= 0; i--)
+        s += h2c(d[i]);
+    return s;
 }
 
-size_t Hex::getSize() const { return len; }
+size_t Hex::sz() const { return len; }
 
-void Hex::trimZeros()
+void Hex::trim()
 {
     while (len > 1 && d[len - 1] == 0)
-        --len;
+        len--;
 }
 
 unsigned char Hex::c2h(char c)
 {
-    c = std::toupper(c);
+    c = toupper(c);
     if (c >= '0' && c <= '9')
         return c - '0';
     if (c >= 'A' && c <= 'F')
         return c - 'A' + 10;
-    throw std::invalid_argument("Invalid hex char");
+    throw std::invalid_argument("bad char");
 }
 
 char Hex::h2c(unsigned char d)
