@@ -4,7 +4,6 @@ project(HexProject)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Указываем директорию include
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Основная программа
