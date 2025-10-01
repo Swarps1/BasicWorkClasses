@@ -2,6 +2,7 @@
 
 #include <string>
 #include <stdexcept>
+#include "vector.hpp"
 
 class Hex
 {
@@ -11,6 +12,7 @@ public:
     Hex(const unsigned char *arr, size_t sz);
     Hex(const Hex &o);
     ~Hex();
+
     Hex add(const Hex &o) const;
     Hex sub(const Hex &o) const;
     Hex cpy() const;
@@ -21,9 +23,7 @@ public:
     size_t sz() const;
 
 private:
-    unsigned char *d;
-    size_t len, cap;
-    void grow(size_t newCap);
+    Vector<unsigned char> digits;
     void trim();
     static unsigned char c2h(char c);
     static char h2c(unsigned char d);

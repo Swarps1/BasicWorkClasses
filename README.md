@@ -5,6 +5,6 @@ mkdir build
 cd build
 cmake ..
 make
-./hex
-./hex_tests
+./hex_demo
+./hex_test
 ```
