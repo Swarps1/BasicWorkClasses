@@ -1,31 +1,27 @@
 #pragma once
 
+#include <cstddef>
 #include <stdexcept>
-#include <cstring>
 
-template <typename T>
-class Vector
+class MyVector
 {
-private:
-    T *data;
-    size_t length;
-    size_t capacity;
-
-    void grow(size_t newCap);
-
 public:
-    Vector();
-    explicit Vector(size_t sz);
-    Vector(const T *arr, size_t sz);
-    Vector(const Vector &other);
-    ~Vector();
+    MyVector();
+    explicit MyVector(size_t size);
+    MyVector(const MyVector &other);
+    MyVector(MyVector &&other) noexcept;
+    MyVector &operator=(const MyVector &other);
+    MyVector &operator=(MyVector &&other) noexcept;
+    ~MyVector();
 
-    T &operator[](size_t index);
-    const T &operator[](size_t index) const;
-
-    void push_back(const T &value);
+    void push_back(unsigned char value);
+    unsigned char &at(size_t index);
+    const unsigned char &at(size_t index) const;
     size_t size() const;
-    size_t cap() const;
-    T *getData() const;
-    void resize(size_t newSize);
+    size_t capacity() const;
+
+private:
+    unsigned char *data_;
+    size_t size_;
+    size_t capacity_;
 };

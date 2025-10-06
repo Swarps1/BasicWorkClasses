@@ -7,8 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 
 add_library(hex
-    src/hex_main.cpp
-    src/hex_arith.cpp
+    src/hex.cpp
     src/vector.cpp
 )
 

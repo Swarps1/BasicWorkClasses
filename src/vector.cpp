@@ -1,100 +1,124 @@
 #include "vector.hpp"
 
-template <typename T>
-Vector<T>::Vector() : data(new T[1]), length(1), capacity(1)
-{
-    data[0] = T();
-}
+MyVector::MyVector() : data_(nullptr), size_(0), capacity_(0) {}
 
-template <typename T>
-Vector<T>::Vector(size_t sz) : data(new T[sz]), length(sz), capacity(sz)
+MyVector::MyVector(size_t size) : size_(size), capacity_(size)
 {
-    for (size_t i = 0; i < sz; ++i)
+    if (size == 0)
     {
-        data[i] = T();
-    }
-}
-
-template <typename T>
-Vector<T>::Vector(const T *arr, size_t sz) : data(new T[sz]), length(sz), capacity(sz)
-{
-    memcpy(data, arr, sz * sizeof(T));
-}
-
-template <typename T>
-Vector<T>::Vector(const Vector &other) : data(new T[other.capacity]), length(other.length), capacity(other.capacity)
-{
-    memcpy(data, other.data, length * sizeof(T));
-}
-
-template <typename T>
-Vector<T>::~Vector()
-{
-    delete[] data;
-}
-
-template <typename T>
-void Vector<T>::grow(size_t newCap)
-{
-    if (newCap <= capacity)
+        data_ = nullptr;
         return;
-    T *newData = new T[newCap];
-    memcpy(newData, data, length * sizeof(T));
-    delete[] data;
-    data = newData;
-    capacity = newCap;
-}
-
-template <typename T>
-T &Vector<T>::operator[](size_t index)
-{
-    if (index >= length)
-        throw std::out_of_range("Index out of range");
-    return data[index];
-}
-
-template <typename T>
-const T &Vector<T>::operator[](size_t index) const
-{
-    if (index >= length)
-        throw std::out_of_range("Index out of range");
-    return data[index];
-}
-
-template <typename T>
-void Vector<T>::push_back(const T &value)
-{
-    if (length == capacity)
-    {
-        grow(capacity * 2);
     }
-    data[length++] = value;
+    data_ = new unsigned char[size];
+    for (size_t i = 0; i < size; ++i)
+    {
+        data_[i] = 0;
+    }
 }
 
-template <typename T>
-size_t Vector<T>::size() const
+MyVector::MyVector(const MyVector &other) : size_(other.size_), capacity_(other.capacity_)
 {
-    return length;
+    if (size_ == 0)
+    {
+        data_ = nullptr;
+        return;
+    }
+    data_ = new unsigned char[size_];
+    for (size_t i = 0; i < size_; ++i)
+    {
+        data_[i] = other.data_[i];
+    }
 }
 
-template <typename T>
-size_t Vector<T>::cap() const
+MyVector::MyVector(MyVector &&other) noexcept : data_(other.data_), size_(other.size_), capacity_(other.capacity_)
 {
-    return capacity;
+    other.data_ = nullptr;
+    other.size_ = 0;
+    other.capacity_ = 0;
 }
 
-template <typename T>
-T *Vector<T>::getData() const
+MyVector &MyVector::operator=(const MyVector &other)
 {
-    return data;
+    if (this != &other)
+    {
+        unsigned char *new_data = nullptr;
+        if (other.size_ > 0)
+        {
+            new_data = new unsigned char[other.size_];
+            for (size_t i = 0; i < other.size_; ++i)
+            {
+                new_data[i] = other.data_[i];
+            }
+        }
+        delete[] data_;
+        data_ = new_data;
+        size_ = other.size_;
+        capacity_ = other.size_;
+    }
+    return *this;
 }
 
-template <typename T>
-void Vector<T>::resize(size_t newSize)
+MyVector &MyVector::operator=(MyVector &&other) noexcept
 {
-    if (newSize > capacity)
-        grow(newSize);
-    length = newSize;
+    if (this != &other)
+    {
+        delete[] data_;
+        data_ = other.data_;
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        other.data_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+    }
+    return *this;
 }
 
-template class Vector<unsigned char>;
+MyVector::~MyVector()
+{
+    delete[] data_;
+}
+
+void MyVector::push_back(unsigned char value)
+{
+    if (size_ == capacity_)
+    {
+        size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
+        unsigned char *new_data = new unsigned char[new_capacity];
+        for (size_t i = 0; i < size_; ++i)
+        {
+            new_data[i] = data_[i];
+        }
+        delete[] data_;
+        data_ = new_data;
+        capacity_ = new_capacity;
+    }
+    data_[size_++] = value;
+}
+
+unsigned char &MyVector::at(size_t index)
+{
+    if (index >= size_)
+    {
+        throw std::out_of_range("Index out of range");
+    }
+    return data_[index];
+}
+
+const unsigned char &MyVector::at(size_t index) const
+{
+    if (index >= size_)
+    {
+        throw std::out_of_range("Index out of range");
+    }
+    return data_[index];
+}
+
+size_t MyVector::size() const
+{
+    return size_;
+}
+
+size_t MyVector::capacity() const
+{
+    return capacity_;
+}
