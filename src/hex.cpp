@@ -9,7 +9,7 @@ Hex::Hex(const char *str)
 {
     if (!str || !str[0])
     {
-        throw std::invalid_argument("Invalid string");
+        throw std::invalid_argument("Ошибка");
     }
     size_t len = 0;
     while (str[len])
@@ -32,7 +32,7 @@ Hex::Hex(const char *str)
         }
         else
         {
-            throw std::invalid_argument("Invalid hex character");
+            throw std::invalid_argument("Ошибка");
         }
     }
     while (len > 1 && digits_.at(len - 1) == 0)
@@ -51,13 +51,13 @@ Hex::Hex(const unsigned char *arr, size_t size)
 {
     if (size == 0)
     {
-        throw std::invalid_argument("Empty array");
+        throw std::invalid_argument("Пусто");
     }
     for (size_t i = 0; i < size; ++i)
     {
         if (arr[i] > 15)
         {
-            throw std::invalid_argument("Invalid hex digit");
+            throw std::invalid_argument("Ошибка");
         }
     }
     digits_ = MyVector(size);
@@ -126,7 +126,7 @@ Hex Hex::sub(const Hex &other) const
 {
     if (lt(other))
     {
-        throw std::runtime_error("Result would be negative");
+        throw std::runtime_error("-");
     }
     Hex result;
     size_t max_size = digits_.size();

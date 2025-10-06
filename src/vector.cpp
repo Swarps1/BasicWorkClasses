@@ -99,7 +99,7 @@ unsigned char &MyVector::at(size_t index)
 {
     if (index >= size_)
     {
-        throw std::out_of_range("Index out of range");
+        throw std::out_of_range("выход за пределы");
     }
     return data_[index];
 }
@@ -108,7 +108,7 @@ const unsigned char &MyVector::at(size_t index) const
 {
     if (index >= size_)
     {
-        throw std::out_of_range("Index out of range");
+        throw std::out_of_range("выход за пределы");
     }
     return data_[index];
 }
